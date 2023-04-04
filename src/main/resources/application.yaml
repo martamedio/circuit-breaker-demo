@@ -1,0 +1,26 @@
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+spring:
+  cloud:
+    gateway:
+      routes:
+        - uri: https://httpbin.org
+          predicates:
+           - Path=/headers/**
+        - uri: https://httpbin.org
+          predicates:
+            - Path=/get/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: myCircuitBreaker
+                fallbackUri: forward:/headers
+                statusCodes: 200
+server:
+  port: 8484
